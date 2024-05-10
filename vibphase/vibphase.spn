@@ -1,9 +1,8 @@
-; dogman devices
-; slow vibrato and phaser
+; dogman devices -regis - slow vibrato and phaser
 ; phaser width and mix set to ramp lfo
-; pot0 vibrato speed
-; pot1 vibrato depth
-; pot2 phaser speed
+; pot0: vibrato speed (scepter)
+; pot1: vibrato depth (orb)
+; pot2: phaser speed (throne)
 
 equ phase reg0
 equ temp reg1

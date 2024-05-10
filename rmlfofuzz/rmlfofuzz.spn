@@ -1,9 +1,7 @@
-; dogman devices
-; regis
-; ring mod-lfo fuzz
-; pot0 ring mod
-; pot1 lfo rate and depth and offset between them
-; pot2 gain
+; dogman devices -regis - ring mod-lfo fuzz
+; pot0 ring mod (scepter)
+; pot1 lfo rate and depth and offset between them (orb)
+; pot2 gain (throne)
 
 ringMod equ reg0
 dry equ reg1
