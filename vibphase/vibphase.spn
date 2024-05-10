@@ -1,0 +1,147 @@
+; dogman devices
+; slow vibrato and phaser
+; phaser width and mix set to ramp lfo
+; pot0 vibrato speed
+; pot1 vibrato depth
+; pot2 phaser speed
+
+equ phase reg0
+equ temp reg1
+equ temp1 reg2
+equ ap1 reg3
+equ ap2 reg4
+equ ap3 reg5
+equ ap4 reg6
+equ led reg7
+equ fback reg8
+equ ap5 reg9
+equ ap6 reg10
+equ ap7 reg11
+equ ap8 reg12
+equ pho reg13
+equ vibo reg14
+
+mem	vdel	1000
+
+skp	run,start
+wlds 	sin0,0,32767 ; vibe
+wlds 	sin1,0,32767 ; phase
+wldr 	rmp0,10,4096 ; mix variation
+
+start:
+: phase
+ldax pot0
+mulx pot0
+sof 0.2,0.02
+wrax sin1_rate,0
+
+cho	rdal,sin1		;read sin1 as +/-1
+sof	0.5,0.5		;make positive only sin ranges 0 to 1
+log	0.5,0
+exp	1,0		;square root function
+sof	1,-0.5		;make +/-0.5
+sof	1.999,0		;make +/-1 again
+wrax	led,1
+
+mulx	rmp0
+sof	0.25,0.65
+wrax	phase,0
+
+; phase first
+
+ldax 0.666
+mulx 0.436 ; phaser feedback
+sof 1/64,0
+wrax fback,0
+
+rdax	ap1,1
+wrax	temp,1
+mulx	phase
+rdax	adcl,1/64	;input to phase shift network
+wrax	ap1,-1
+mulx	phase
+rdax	temp,1
+wrax	temp1,1
+rdax	fback,1
+wrax	temp1,0
+rdax	ap2,1
+wrax	temp,1
+mulx	phase
+rdax	temp1,1
+wrax	ap2,-1
+mulx	phase
+rdax	temp,1
+wrax	temp1,0
+rdax	ap3,1
+wrax	temp,1
+mulx	phase
+rdax	temp1,1
+wrax	ap3,-1
+mulx	phase
+rdax	temp,1
+wrax	temp1,0
+rdax	ap4,1
+wrax	temp,1
+mulx	phase
+rdax	temp1,1
+wrax	ap4,-1
+mulx	phase
+rdax	temp,1
+wrax	temp1,0
+rdax	ap5,1
+wrax	temp,1
+mulx	phase
+rdax	temp1,1
+wrax	ap5,-1
+mulx	phase
+rdax	temp,1
+wrax	temp1,0
+rdax	ap6,1
+wrax	temp,1
+mulx	phase
+rdax	temp1,1
+wrax	ap6,-1
+mulx	phase
+rdax	temp,1
+wrax	temp1,0
+rdax	ap7,1
+wrax	temp,1
+mulx	phase
+rdax	temp1,1
+wrax	ap7,-1
+mulx	phase
+rdax	temp,1
+wrax	temp1,0
+rdax	ap8,1
+wrax	temp,1
+mulx	phase
+rdax	temp1,1
+wrax	ap8,-1
+mulx	phase
+rdax	temp,1
+sof	-2,0
+sof	-2,0
+sof	-2,0
+sof	-2,0
+sof	-2,0
+sof	-2,0
+wrax fback,1
+wrax pho,0
+
+; vibrato
+
+rdax pot0,1
+sof 0.3,0.1
+wrax sin0_rate,0
+
+cho rda,sin0,sin|reg|compc,vdel+170
+cho rda,sin0,sin,vdel+171
+wrax vibo,0
+
+rdax pho, 0.333
+mulx led
+mulx fback
+rdax vibo, 0.333
+rdax adcl,0.333
+
+wrax dacr,0

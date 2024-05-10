@@ -1,0 +1,68 @@
+; dogman devices
+; regis
+; ring mod-lfo fuzz
+; pot0 ring mod
+; pot1 lfo rate and depth and offset between them
+; pot2 gain
+
+ringMod equ reg0
+dry equ reg1
+tri equ reg2
+rung equ re3
+filt equ reg4
+temp equ reg5
+fcon equ reg6
+
+skp	run,start
+wlds 	sin0,511,32767 ; ring mod
+wlds 	sin1,437,32767 ; fuzz lfo
+wldr 	rmp0,10,4096 ; triangle wave
+
+start:
+
+; ring modulator rate
+
+cho rdal,sin0
+sof -2,0
+sof -2,0
+sof -2,0
+sof -2,0
+wrax ringMod,0
+
+; get dry
+
+rdax adcl, 1
+wrax dry, 0
+
+; crossfade
+
+rdax adcl,-1
+rdax ringMod,1
+mulx pot1
+wrax rung, 0
+
+; gain LFO
+rdax pot1, 0.628
+sof 0.85, 0.015
+wrax sin1, 1
+
+; gain stage
+rdax rung, 1
+sof -2, 0
+mulx pot2
+sof -2,0
+sof -2,0
+sof -2,0
+sof -2,0
+sof -2,0
+sof -2,0
+sof -2,0
+sof -2,0
+sof -2,0
+; tone
+wrax temp, -1
+rdfx filt, 0.1
+wrhx filt, -1
+mulx fcon
+rdax temp, 1
+wrax dacl,0
