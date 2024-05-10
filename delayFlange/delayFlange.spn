@@ -1,11 +1,26 @@
 ; dogman devices - regis - delay flange
-; pot0: delay time (scepter)
+; pot0: delay time, flange rate (scepter)
 ; pot1: delay repeats, inverse flange regen (orb)
-; pot2: flange deptth (throne)
+; pot2: delay volume, flange depth (throne)
 
 equ delfb reg0
 equ del reg1
+equ flaout reg2
+equ ffbkmax 0.9
+equ flafb reg3
+equ flaout reg4
+equ flamix reg5
+equ ffbk reg6
+equ tri reg7
+equ fhp reg9
 
+mem fladel 1000
+
+skp run,start
+wldr rmp1,0,512
+wldr rmp0,0,4096
+
+start:
 ; input mixer
 ldax adcl
 rdax delfb,1
@@ -19,10 +34,48 @@ wrax del,1
 ; delay feedback volume
 mulx pot1
 wrax delfb,1
-; delay mix (60-40)
-rdax delfb,0.6
-rdax adcl,0.4
+; delay mix
+rdax delfb,1
+rdax mulx pot2
 
-; output
+; flange
+rdax flaout, ffbkmax
+mulx ffbk
+rdax adcl, 1
+wra fladel,0
+
+rdax pot1, 1
+sof 1.99,0
+wrax flamix,0
+rdax pot0,1
+sof -1,-1
+sof -1.99,0
+sof -1,0.999
+wrax ffbk,0
+
+rdax pot0,1
+mulx pot0
+mulx pot0
+sof 0.4,0.01
+wrax ramp0_rate,0
+cho rdal,rmp0
+sof 1,-0.25
+absa
+wrax tri,0
+
+cho rdal,rmp1
+rdax tri,-0.06
+sof 0.5,0
+wrax rmp1_rate,0
+
+cho rda,rmp1,reg|compc,fladel
+cho rda,rmp1,0,fladel+1
+rdfx fhp,0.02
+wrhx fhp,-1
+wrax flaout,0
+
+rdax flaout,1
+mulx flamix
 rdax adcl,1
+wrax dacl,0
 
