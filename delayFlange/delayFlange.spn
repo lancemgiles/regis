@@ -2,3 +2,27 @@
 ; pot0: delay time (scepter)
 ; pot1: delay repeats, inverse flange regen (orb)
 ; pot2: flange deptth (throne)
+
+equ delfb reg0
+equ del reg1
+
+; input mixer
+ldax adcl
+rdax delfb,1
+
+; delay
+wra 0,0
+ldax pot0
+wrax addr_ptr,0
+rpma 1
+wrax del,1
+; delay feedback volume
+mulx pot1
+wrax delfb,1
+; delay mix (60-40)
+rdax delfb,0.6
+rdax adcl,0.4
+
+; output
+rdax adcl,1
+
